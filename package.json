@@ -1,6 +1,6 @@
 {
   "name": "monorun",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Intelligently detects and runs scripts specific to your project's directory in the terminal.",
   "main": "index.js",
   "repository": {

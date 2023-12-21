@@ -69,7 +69,7 @@ const run = async () => {
   const choises = Object.entries(scripts).map(([key, value]) => ({
     title: key as string,
     value: key as string,
-    description: value as string,
+    description: `${value}\n`,
   }));
 
   const { script } = await prompts({

@@ -6,7 +6,7 @@ In a multi-repository setup, you have access to the list of scripts from the roo
 
 This is great because it eliminates the need to switch between package and repository roots in the terminal and automatically lists all the package.json scripts for you to choose from, making your workflow more efficient.
 
-![Preview](https://homoky-2022.objects-us-east-1.dream.io/hgBYpDro.gif)`
+![Preview](./assets//preview.gif)`
 
 ## Features
 

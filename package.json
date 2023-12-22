@@ -1,6 +1,6 @@
 {
   "name": "monorun",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Intelligently detects and runs scripts specific to your project's directory in the terminal.",
   "main": "index.js",
   "repository": {
@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "tsc && node ./dist/index.js",
+    "dev": "tsc && npm link",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

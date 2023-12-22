@@ -2,78 +2,9 @@
 
 import { packageDirectory } from "pkg-dir";
 import { rootPkgJSON } from "root-pkg-json";
-import fs from "fs/promises";
-import { PackageJson } from "./types";
-import { spawn } from "child_process";
-import prompts from "prompts";
-import { detect, PM } from "detect-package-manager";
-
-export const getPackageJsonScripts = async (path: string | undefined) => {
-  const content: PackageJson | undefined = path
-    ? await fs
-        .readFile(path, "utf-8")
-        .then((content: any) => JSON.parse(content))
-    : undefined;
-
-  if (!content) return;
-
-  if (!content.scripts || Object.keys(content.scripts).length === 0) {
-    return;
-  }
-
-  return content.scripts;
-};
-
-const selectAndRunScript = async ({
-  packageManager,
-  scripts,
-  includeContextSwitch,
-}: {
-  scripts: { [key: string]: string };
-  packageManager: PM;
-  includeContextSwitch: boolean;
-}) => {
-  if (!scripts || Object.keys(scripts).length === 0) {
-    console.log("No scripts found in package.json file.");
-    return;
-  }
-
-  const choises = Object.entries(scripts).map(([key, value]) => ({
-    title: key as string,
-    value: key as string,
-    description: `${value}\n`,
-  }));
-
-  if (includeContextSwitch) {
-    choises.unshift({
-      title: "Project root",
-      description:
-        "Change scope from package level to project level to pick script from project root package.json\n",
-      value: "_root",
-    });
-  }
-
-  const { script } = await prompts({
-    type: "autocomplete",
-    name: "script",
-    message: "Select script to run:",
-    choices: choises,
-    active: "none",
-  });
-
-  if (!script) {
-    console.log("\nExited gracefully.\n");
-    process.exit(0);
-  }
-
-  if (script === "_root") {
-    return true;
-  }
-
-  spawn(packageManager, ["run", script], { stdio: "inherit" });
-
-  return false;
-};
+import { detect } from "detect-package-manager";
+import { getPackageJsonScripts } from "utilities/getPackageJsonScripts";
+import { selectAndRunScript } from "utilities/selectAndRunScript";
 
 export const main = async () => {
   const rootPackageJsonFilePath = await rootPkgJSON();
@@ -88,11 +19,9 @@ export const main = async () => {
     return;
   }
 
-  const rootPackageJsonScripts = await getPackageJsonScripts(
-    rootPackageJsonFilePath
-  );
+  const rootPackageJson = await getPackageJsonScripts(rootPackageJsonFilePath);
 
-  const currentPackageJsonScripts = await getPackageJsonScripts(
+  const currentPackageJson = await getPackageJsonScripts(
     currentPackageJsonFilePath
   );
 
@@ -100,12 +29,13 @@ export const main = async () => {
     cwd: rootPackageJsonFilePath.replace("/package.json", ""),
   });
 
-  if (currentPackageJsonScripts) {
+  if (currentPackageJson?.scripts) {
     const switchToRoot = await selectAndRunScript({
       packageManager,
-      scripts: currentPackageJsonScripts,
+      scripts: currentPackageJson.scripts,
       includeContextSwitch:
         currentPackageJsonFilePath !== rootPackageJsonFilePath,
+      packagePath: currentPackageJsonFilePath!.replace("/package.json", ""),
     });
 
     if (!switchToRoot) return;
@@ -113,7 +43,7 @@ export const main = async () => {
 
   if (
     currentPackageJsonFilePath !== rootPackageJsonFilePath &&
-    !currentPackageJsonScripts
+    !currentPackageJson?.scripts
   ) {
     console.log("\n---------------------------------------");
     console.log(`No scripts found in package.json file.\n`);
@@ -122,18 +52,19 @@ export const main = async () => {
     console.log("---------------------------------------\n\n");
   }
 
-  if (!rootPackageJsonScripts) {
+  if (!rootPackageJson?.scripts) {
     console.log(
       `No scripts found in package.json file.\n\nPath of package.json file: ${currentPackageJsonFilePath}`
     );
     return;
   }
 
-  if (rootPackageJsonScripts) {
+  if (rootPackageJson?.scripts) {
     await selectAndRunScript({
       packageManager,
-      scripts: rootPackageJsonScripts,
+      scripts: rootPackageJson?.scripts,
       includeContextSwitch: false,
+      packagePath: rootPackageJsonFilePath.replace("/package.json", ""),
     });
   }
 };

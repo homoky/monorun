@@ -1,0 +1,9 @@
+module.exports = {
+  entry: './src/index.ts',
+  mode: 'procuction',
+  target: 'node',
+  output: {
+    filename: 'index.js',
+    path: __dirname + '/dist',
+  },
+};

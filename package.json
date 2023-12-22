@@ -8,10 +8,9 @@
     "url": "https://github.com/homoky/monorun"
   },
   "scripts": {
-    "start": "tsc && node ./dist/index.js",
-    "dev": "tsc && npm link",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build && node ./dist/index.js",
+    "dev": "npm run build && npm link",
+    "build": "tsc && esbuild --bundle --platform=node --format=cjs --outdir=dist src/index.ts"
   },
   "keywords": [
     "monorepo",
@@ -23,7 +22,6 @@
   ],
   "author": "Petr Homoky",
   "license": "ISC",
-  "type": "module",
   "bin": {
     "monorun": "./dist/index.js",
     "mrun": "./dist/index.js",
@@ -42,6 +40,7 @@
   "devDependencies": {
     "@types/node": "^20.10.5",
     "@types/prompts": "^2.4.9",
+    "esbuild": "^0.19.10",
     "typescript": "^5.3.3"
   }
 }

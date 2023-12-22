@@ -104,7 +104,8 @@ export const main = async () => {
     const switchToRoot = await selectAndRunScript({
       packageManager,
       scripts: currentPackageJsonScripts,
-      includeContextSwitch: true,
+      includeContextSwitch:
+        currentPackageJsonFilePath !== rootPackageJsonFilePath,
     });
 
     if (!switchToRoot) return;

@@ -1,6 +1,6 @@
 {
   "name": "monorun",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Intelligently detects and runs scripts specific to your project's directory in the terminal.",
   "main": "index.js",
   "repository": {
@@ -35,7 +35,7 @@
   "dependencies": {
     "detect-package-manager": "^3.0.1",
     "enquirer": "^2.4.1",
-    "pkg-dir": "^8.0.0",
+    "pkg-dir": "^7.0.0",
     "prompts": "^2.4.2",
     "root-pkg-json": "^1.0.2"
   },
